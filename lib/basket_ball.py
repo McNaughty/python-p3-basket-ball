@@ -182,3 +182,110 @@ def game_dict():
             ]
         }
     }
+
+game_dictionary = game_dict()
+# name="Kristaps Porzingis"
+
+def player_details(game_dictionary):
+    # empty list that will hold all players combined
+    all_players = []
+    # game_dictionary.items() iterates over the key-value pairs in the game_dictionary. 
+    # each key is a team type ("home" or "away")
+    # value is a dictionary containing details about that team.
+    for team_type, team_details in game_dictionary.items():
+        # extracts the list of players for the current team.
+        players = team_details.get("players", [])
+        all_players.extend(players)
+    return all_players
+
+
+
+def num_points_per_game(player_name):
+    players_details = player_details(game_dictionary)
+    for player in players_details:
+        if player["name"] == player_name:
+                return player.get("points_per_game")
+    return None
+
+def player_age(player_name):
+    players_details = player_details(game_dictionary)
+    for player in players_details:
+        if player["name"] == player_name:
+            return player.get("age")
+    return None
+
+def team_colors(team_name):
+    if isinstance(game_dictionary, dict):
+        for team_type, team_details in game_dictionary.items():
+            if team_details["team_name"] == team_name:
+                colors = team_details.get("colors", [])
+                print(f"{team_name} team colors: {colors}")
+                return colors
+        return []
+
+
+def team_names():
+    teams = []
+    for team_type, team_details in game_dictionary.items():
+        teams.append(team_details["team_name"])
+    return teams
+
+def player_numbers(team):
+    jersey_numbers = []
+    for team_type, team_details in game_dictionary.items():
+        if team_details["team_name"] == team:
+            for player in team_details["players"]:
+                number = player["number"]
+                jersey_numbers.append(number)
+    return jersey_numbers
+        
+
+def player_stats(name):
+    # player_stats_list = []
+    for team_type, team_details in game_dictionary.items():
+        for player in team_details["players"]:
+            if player["name"] == name:
+                return {
+                    "name": player["name"],
+                    "number": player["number"],
+                    "position": player["position"],
+                    "points_per_game": player["points_per_game"],
+                    "rebounds_per_game": player["rebounds_per_game"],
+                    "assists_per_game": player["assists_per_game"],
+                    "steals_per_game": player["steals_per_game"],
+                    "blocks_per_game": player["blocks_per_game"],
+                    "career_points": player["career_points"],
+                    "age": player["age"],
+                    "height_inches": player["height_inches"],
+                    "shoe_brand": player["shoe_brand"]
+                }
+    return {}
+
+def average_rebounds_by_shoe_brand():
+    # Create a dictionary to store rebounds for each shoe brand
+    shoe_brand_rebounds = {}
+
+    # Iterate through teams and players in the game dictionary
+    for team_type, team_details in game_dictionary.items():
+        for player in team_details["players"]:
+            shoe_brand = player["shoe_brand"]
+            rebounds = player["rebounds_per_game"]
+
+            # Update the shoe brand rebounds dictionary
+            if shoe_brand not in shoe_brand_rebounds:
+                shoe_brand_rebounds[shoe_brand] = [rebounds]
+            else:
+                shoe_brand_rebounds[shoe_brand].append(rebounds)
+
+    # Calculate the average rebounds for each shoe brand
+    average_rebounds_dict = {}
+    for brand, rebounds_list in shoe_brand_rebounds.items():
+        average_rebounds = sum(rebounds_list) / len(rebounds_list)
+        average_rebounds_dict[brand] = average_rebounds
+
+    # Print the result with adjusted formatting
+    for brand, average_rebounds in average_rebounds_dict.items():
+        print(f"{brand}:  {average_rebounds:.2f}")
+
+average_rebounds_by_shoe_brand()
+
